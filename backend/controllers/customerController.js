@@ -8,7 +8,12 @@ export const createCustomer = async (req, res) => {
     return res.status(400).json({message: "name, phone, email are required"});
   }
 
-  const customer = await Customer.create({ name, phone, email });
+  const customer = await Customer.create({
+     name,
+     phone,
+     email,
+     createdBy: req.user._id, //show user who created new customer; req.user comes from protect middleware
+    });
   res.status(200).json(customer);
 };
 
