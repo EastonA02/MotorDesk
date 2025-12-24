@@ -17,7 +17,7 @@ app.use(express.json());
 
 app.use("/api/customers", customerRoutes);
 app.use("/api/vehicles", vehicleRoutes);
-app.use("/api/workorders", workOrderRoutes);
+app.use("/api/workOrders", workOrderRoutes);
 app.use("/api/users", userRoutes);
 
 const PORT = process.env.PORT || 3000;

@@ -1,4 +1,6 @@
 import Customer from "../models/customerModel.js"
+import Vehicle from "../models/vehicleModel.js";
+import WorkOrder from "../models/workOrderModel.js";
 
 //create customer
 export const createCustomer = async (req, res) => {
@@ -21,3 +23,21 @@ export const getCustomers = async (req, res) => {
   const customers = await Customer.find().sort({ createdAt: -1 }); //ordered so newewst appear first
   res.json(customers);
 };
+
+export const getCustomerVehicles = async (req,res) => {
+  const customerId = req.params.id; //req.params.id comes from URL
+
+  const vehicles = await Vehicle.find({ customer: customerId }) //get all vehicles where customer = this id
+    .sort({ createdAt: -1 });
+
+  res.json(vehicles);
+};
+
+export const getCustomerWorkOrders = async (req,res) => {
+  const customerId = req.params.id;
+
+  const workOrders = await WorkOrder.find({ customer: customerId }) //get all work orders where customer = this id
+    .sort({ createdAt: -1 });
+  
+  res.json(workOrders);
+}
