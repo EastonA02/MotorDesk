@@ -2,12 +2,16 @@ import Customer from "../models/customerModel.js"
 import Vehicle from "../models/vehicleModel.js";
 import WorkOrder from "../models/workOrderModel.js";
 
+import { validateObjectId } from "../utils/validateObjectId.js";
+
 //create customer
 export const createCustomer = async (req, res) => {
   const { name, phone, email } = req.body;
 
   if (!name || !phone || !email) {
-    return res.status(400).json({message: "name, phone, email are required"});
+    //return res.status(400).json({message: "name, phone, email are required"});
+    res.status(400);
+    throw new Error("Name, phone, and email are required");
   }
 
   const customer = await Customer.create({
@@ -16,7 +20,7 @@ export const createCustomer = async (req, res) => {
      email,
      createdBy: req.user._id, //show user who created new customer; req.user comes from protect middleware
     });
-  res.status(200).json(customer);
+  res.status(201).json(customer); //201="created"
 };
 
 export const getCustomers = async (req, res) => {
@@ -27,6 +31,16 @@ export const getCustomers = async (req, res) => {
 export const getCustomerVehicles = async (req,res) => {
   const customerId = req.params.id; //req.params.id comes from URL
 
+  validateObjectId(customerId, "customer ID");
+
+  const customer = await Customer.findById(customerId);
+
+  //handle error for bad ID -> Non existent customer -> 404 (not found)
+  if (!customer) {
+    res.status(404);
+    throw new Error("Customer not found");
+  }
+
   const vehicles = await Vehicle.find({ customer: customerId }) //get all vehicles where customer = this id
     .sort({ createdAt: -1 });
 
@@ -35,6 +49,16 @@ export const getCustomerVehicles = async (req,res) => {
 
 export const getCustomerWorkOrders = async (req,res) => {
   const customerId = req.params.id;
+
+  validateObjectId(customerId, "customer ID");
+
+  const customer = await Customer.findById(customerId);
+
+  //handle error for bad ID -> Non existent customer -> 404 (not found)
+  if (!customer) {
+    res.status(404);
+    throw new Error("Customer not found");
+  }
 
   const workOrders = await WorkOrder.find({ customer: customerId }) //get all work orders where customer = this id
     .sort({ createdAt: -1 });

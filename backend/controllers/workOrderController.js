@@ -4,8 +4,10 @@ import WorkOrder from "../models/workOrderModel.js";
 export const createWorkOrder = async (req, res) => {
   const { customer, vehicle, description, status } = req.body;
 
-  if (!customer || !vehicle || !description || !status) {
-    return res.status(400).json({ message: "customer, vehicle, description are required" });
+  if (!customer || !vehicle || !description) {
+    //return res.status(400).json({ message: "customer, vehicle, description are required" });
+    res.status(400);
+    throw new Error("Missing fields");
   }
 
   const workOrder = await WorkOrder.create({
@@ -24,7 +26,6 @@ export const getWorkOrders = async (req, res) => {
   const workOrders = await WorkOrder.find()
     .populate("customer", "name phone email")
     .populate("vehicle", "make model year licensePlate vin")
-    .populate("status")
     .populate("createdBy", "name role")
     .sort({ createdAt: -1 });
 
@@ -34,6 +35,8 @@ export const getWorkOrders = async (req, res) => {
 //update work order
 export const updateWorkOrder = async(req,res) => {
   const workOrderId = req.params.id;
+
+  validateObjectId(workOrderId, "work order ID");
 
   const updatedWorkOrder = await WorkOrder.findByIdAndUpdate(
     workOrderId, //id of work order to update
@@ -46,7 +49,9 @@ export const updateWorkOrder = async(req,res) => {
 
   //Work order not found
   if (!updatedWorkOrder) {
-    return res.status(400).json( { message: "Work order not found" });
+    //return res.status(400).json( { message: "Work order not found" });
+    res.status(404); //404="resource not found"
+    throw new Error("Work order not found");
   }
 
   res.json(updatedWorkOrder)

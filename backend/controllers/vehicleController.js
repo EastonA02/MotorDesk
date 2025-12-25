@@ -4,7 +4,9 @@ export const createVehicle = async (req, res) => {
   const { customer, make, model, year, licensePlate, vin } = req.body;
 
   if (!customer || !make || !model || !year || !licensePlate) {
-    return res.status(400).json({ message: "Missing required fields" });
+    //return res.status(400).json({ message: "Missing required fields" });
+    res.status(400);
+    throw new Error("Missing required fields")
   }
 
   const vehicle = await Vehicle.create({ customer, make, model, year, licensePlate, vin });
