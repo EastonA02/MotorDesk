@@ -2,7 +2,7 @@ import WorkOrder from "../models/workOrderModel.js";
 
 //create new work order
 export const createWorkOrder = async (req, res) => {
-  const { customer, vehicle, description, status } = req.body;
+  const { customer, vehicle, description } = req.body;
 
   if (!customer || !vehicle || !description) {
     //return res.status(400).json({ message: "customer, vehicle, description are required" });
