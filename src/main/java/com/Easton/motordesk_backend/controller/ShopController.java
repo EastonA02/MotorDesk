@@ -11,7 +11,7 @@ import java.util.List;
 
 @AllArgsConstructor
 @RestController //Mark this class to handle HTTP req's
-@RequestMapping("/api/motordesk") //define base URL
+@RequestMapping("/api/motordesk/shop") //define base URL
 
 public class ShopController {
 
@@ -45,7 +45,7 @@ public class ShopController {
         return ResponseEntity.ok(shops);
     }
 
-    //map POST request with id to update method
+    //map PUT request with id to update method
     @PutMapping("{id}")
     public ResponseEntity<ShopDto> updateShop(
             //id from url
