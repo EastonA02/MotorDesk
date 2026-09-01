@@ -20,11 +20,11 @@ public class CustomerMapper {
     //map Customer Dto to Customer entity
     public static Customer mapToCustomer (CustomerDto customerDto, Shop shop){
         return new Customer(
+                //Customer constructor expects Shop object --> (id, phone, address, name, shop)
                 customerDto.getId(),
                 customerDto.getPhone(),
                 customerDto.getAddress(),
                 customerDto.getName(),
-                //Customer constructor expects Shop object --> (id, phone, address, name, shop)
                 shop
         );
     }
