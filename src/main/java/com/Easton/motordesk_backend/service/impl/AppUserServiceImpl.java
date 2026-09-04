@@ -9,6 +9,7 @@ import com.Easton.motordesk_backend.repository.AppUserRepository;
 import com.Easton.motordesk_backend.repository.ShopRepository;
 import com.Easton.motordesk_backend.service.AppUserService;
 import lombok.AllArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,6 +21,7 @@ public class AppUserServiceImpl implements AppUserService {
 
     private AppUserRepository appUserRepository;
     private ShopRepository shopRepository;
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public AppUserDto createAppUser(AppUserDto appUserDto) {
@@ -27,6 +29,12 @@ public class AppUserServiceImpl implements AppUserService {
                 .orElseThrow(() -> new ResourceNotFoundException("Shop not found"));
 
         AppUser appUser = AppUserMapper.mapToAppUser(appUserDto, shop);
+
+        //encode(hash) password of entity before saving to db
+        appUser.setPassword(
+                passwordEncoder.encode(appUser.getPassword())
+        );
+
         AppUser savedAppUser = appUserRepository.save(appUser);
         return AppUserMapper.mapToAppUserDto(savedAppUser);
     }
