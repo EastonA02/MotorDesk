@@ -4,11 +4,14 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
+
+@AllArgsConstructor
 
 //mark class as Spring managed bean(object)
 @Component
@@ -58,6 +61,17 @@ public class JwtUtil {
         boolean isExpired = claims.getExpiration().before(new Date());
 
         return (username.equals(expectedUsername) && !isExpired);
+    }
+
+    //pull the username (subject) out of a token, without checking expiration
+    public String extractUsername(String token) {
+        var claims = Jwts.parser()
+                .verifyWith(this.secretKey)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+
+        return claims.getSubject();
     }
 
 }

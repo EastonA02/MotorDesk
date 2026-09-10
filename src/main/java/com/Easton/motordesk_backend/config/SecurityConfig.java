@@ -1,5 +1,7 @@
 package com.Easton.motordesk_backend.config;
 
+import com.Easton.motordesk_backend.security.JwtFilter;
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -9,11 +11,16 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+@AllArgsConstructor
 
 //mark class as source of bean(object) definitions
 // bean = object who's life-cycle is managed by spring
 @Configuration
 public class SecurityConfig {
+
+    private final JwtFilter jwtFilter;
 
     /*@Bean
     Tells method to register returned object as a bean
@@ -40,9 +47,12 @@ public class SecurityConfig {
                 //allow anyone to access these endpoints
                 .requestMatchers(
                         HttpMethod.POST, "/api/motordesk/user").permitAll()
-
+                .requestMatchers(
+                        HttpMethod.POST, "/api/motordesk/auth/login").permitAll()
                  //any requests other than those listed above require access
-                .anyRequest().authenticated());
+                .anyRequest().authenticated())
+                //run JWT filter
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
